@@ -11,6 +11,100 @@ except Exception:
     model = None
 
 LEGAL_KB = {
+        "public_smoking": {
+        "reply": "Smoking in public places and public transport may be restricted under applicable rules. Note the date, time, vehicle or location, and take a photo or video only if it is safe. You may report repeated violations to the transport authority, local civic body, or police. Avoid confrontation if the person becomes aggressive.",
+        "links": [
+            "https://www.india.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "low"
+    },
+    "civic_issue": {
+        "reply": "For civic problems such as garbage, damaged roads, street lights, water supply, drainage, or stray animals, record the exact location, date, time, photos, and videos. Report it to your local municipal body, panchayat, or relevant department. Keep the complaint number and follow up if the issue is not resolved.",
+        "links": [
+            "https://pgportal.gov.in/",
+            "https://www.india.gov.in/"
+        ],
+        "urgency": "medium"
+    },
+        "government_misuse": {
+        "reply": "If a government employee or public servant is misusing their power, keep evidence such as names, designation, office address, dates, receipts, messages, photos, and witness details. You may complain to the concerned department, senior officer, vigilance authority, or appropriate grievance portal. Do not pay a bribe; preserve any demand for money as evidence.",
+        "links": [
+            "https://pgportal.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "high"
+    },
+    "kidnapping": {
+        "reply": "If someone has been kidnapped, abducted, or is being held against their will, contact the police immediately. If there is immediate danger, call 112. Preserve the last known location, phone number, photo, clothing description, vehicle details, and any messages or calls. Do not try to confront the kidnapper yourself.",
+        "links": [
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "critical"
+    },
+    "public_nuisance": {
+        "reply": "For public nuisance, record the date, time, location, type of disturbance, and any photos, videos, or witness details. You may report repeated disturbances to the local police, municipal authority, or relevant local body. Avoid direct confrontation if there is a risk of violence.",
+        "links": [
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "medium"
+    },
+    "child_labor": {
+        "reply": "Child labour is a serious issue. Note the child’s approximate age, work location, working hours, employer or shop name, address, and any photos or videos only if it is safe to take them. You may report it to the local police, labour department, child protection authorities, or Child Helpline 1098. Do not confront the employer or put the child at risk.",
+        "links": [
+            "https://www.indiacode.nic.in/",
+            "https://www.wcd.gov.in/child/child-helpline"
+        ],
+        "urgency": "high"
+    },
+    "domestic_violence": {
+        "reply": "If you are facing domestic violence, prioritize your safety. Move to a safe place if possible, keep evidence such as messages, medical records, photos, and witness details, and contact someone you trust. You may seek help from the police, Protection Officer, or legal-aid services. If there is immediate danger, call 112.",
+        "links": [
+            "https://nalsa.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "critical"
+    },
+    "dowry_harassment": {
+        "reply": "If you are facing dowry demands or harassment, preserve messages, call records, bank transactions, gifts, photographs, and witness details. Do not agree to demands under pressure. You may seek help from the police, a lawyer, women’s helpline, or legal-aid services.",
+        "links": [
+            "https://nalsa.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "high"
+    },
+    "discrimination": {
+        "reply": "Discrimination based on caste, religion, gender, disability, or other protected characteristics may require a complaint to the appropriate authority. Keep messages, names, dates, witnesses, and any evidence of unequal treatment. Legal-aid services may be able to help you understand available options.",
+        "links": [
+            "https://nalsa.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "medium"
+    },
+    "constitutional_rights": {
+        "reply": "The Constitution of India protects fundamental rights, including equality, freedom of speech and expression, protection of life and personal liberty, and protection against exploitation. The exact rights and remedies depend on your situation. You can read the official Constitution through India Code.",
+        "links": [
+            "https://www.indiacode.nic.in/handle/123456789/1362",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "low"
+    },
+    "rti": {
+        "reply": "Under the Right to Information process, you can ask a public authority for information held by it. Write a clear request, mention the information you need, and submit it to the concerned Public Information Officer. Keep a copy of your application and any response.",
+        "links": [
+            "https://rtionline.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "low"
+    },
+    "defamation": {
+        "reply": "If someone is spreading false statements or rumours about you, save screenshots, links, dates, names, and witness details. Do not respond aggressively. A lawyer can help you understand whether the statements may be defamatory and what remedies may be available.",
+        "links": [
+            "https://www.indiacode.nic.in/",
+            "https://nalsa.gov.in/"
+        ],
+        "urgency": "medium"
+    },
     "theft": {
         "reply": "If your handbag, phone, wallet, or other belongings were stolen or you were robbed, write down the time, place, and description of the person or vehicle involved. Do not confront the thief. Report the theft to the nearest police station and preserve CCTV footage, receipts, photos, or messages that may help.",
         "links": [
@@ -79,6 +173,64 @@ LEGAL_KB = {
     }
 }
 KEYWORD_INTENTS = {
+        "public_smoking": [
+        "smoking in public", "smoking in bus", "smoking in train",
+        "smoking in public transport", "smoking in public place",
+        "someone smoking", "cigarette in public"
+    ],
+    "civic_issue": [
+        "garbage", "street light", "street lights", "road damage",
+        "damaged road", "water supply", "no water", "electricity",
+        "no electricity", "stray dogs", "drainage", "sewage",
+        "pothole", "public toilet", "municipality"
+    ],
+    "government_misuse": {
+        "reply": "If a government employee, police officer, or public representative is misusing power, demanding a bribe, or not performing their duty, keep evidence such as name, designation, office, date, time, receipts, messages, photos, and witness details. Do not pay a bribe. You may file a public grievance through CPGRAMS or approach the concerned department, vigilance authority, or appropriate anti-corruption authority.",
+        "links": [
+            "https://pgportal.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "high"
+    },
+    "kidnapping": [
+        "kidnap", "kidnapped", "kidnapping", "abduct", "abducted",
+        "missing", "missing person", "missing child", "missing kid",
+        "my kid is missing", "my child is missing", "held against my will",
+        "captivity"
+    ],
+    "public_nuisance": [
+        "public nuisance", "loud music", "noise complaint",
+        "public disturbance", "blocking road", "public place"
+    ],
+    "child_labor": [
+        "child labour", "child labor", "child working", "child exploitation",
+        "forced to beg", "child beggar", "child working in factory",
+        "child working in restaurant", "child working in tea stall",
+        "child working in shop", "children working"
+    ],
+    "domestic_violence": [
+        "domestic violence", "husband abusing", "family abuse",
+        "wife beating", "domestic abuse", "violence at home"
+    ],
+    "dowry_harassment": [
+        "dowry", "dowry harassment", "dowry demand"
+    ],
+    "discrimination": [
+        "discrimination", "caste discrimination", "religion discrimination",
+        "gender discrimination", "untouchability"
+    ],
+    "constitutional_rights": [
+        "fundamental rights", "constitutional rights", "indian constitution",
+        "my rights under constitution"
+    ],
+    "rti": [
+        "rti", "right to information", "information officer",
+        "government information"
+    ],
+    "defamation": [
+        "defamation", "false rumors", "fake news about me",
+        "spreading rumours", "spreading rumors"
+    ],
     "theft": [
         "stolen", "steal", "stole", "robbed", "robbery", "theft",
         "handbag", "wallet", "phone stolen", "bag stolen", "money stolen"
