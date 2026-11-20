@@ -1,0 +1,19 @@
+text,label
+Someone is threatening me,harassment
+A person is repeatedly messaging and abusing me,harassment
+My coworker is harassing me at work,workplace_harassment
+My manager is verbally abusing me,workplace_harassment
+My employer has not paid my salary,salary_dispute
+My company is delaying my salary,salary_dispute
+My landlord is not returning my security deposit,tenant_dispute
+My landlord is asking me to leave without notice,tenant_dispute
+I bought a fake product online,consumer_complaint
+The seller is not responding after I received a damaged product,consumer_complaint
+Someone hacked my social media account,cybercrime
+Someone is blackmailing me with my photos,cybercrime
+I received a fake job offer and they asked for money,fraud
+Someone cheated me in an online payment,fraud
+I need to know my legal rights,general_legal_help
+What should I do if someone files a false case against me?,general_legal_help
+I am in immediate danger,emergency
+Someone is threatening to hurt me right now,emergency
