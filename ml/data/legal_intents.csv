@@ -17,3 +17,101 @@ I need to know my legal rights,general_legal_help
 What should I do if someone files a false case against me?,general_legal_help
 I am in immediate danger,emergency
 Someone is threatening to hurt me right now,emergency
+A government employee is misusing their power,government_misuse
+A government officer is asking for a bribe,government_misuse
+A public servant is misusing their position,government_misuse
+A police officer is misusing their power,government_misuse
+Someone kidnapped me,kidnapping
+My child has been kidnapped,kidnapping
+Someone is holding me against my will,kidnapping
+A person is missing and may have been abducted,kidnapping
+People are creating nuisance in a public area,public_nuisance
+Someone is playing loud music late at night,public_nuisance
+People are blocking the road and causing trouble,public_nuisance
+Someone is causing public disturbance in my area,public_nuisance
+A child is being made to work,child_labor
+A child is working instead of going to school,child_labor
+A child is being exploited for work,child_labor
+Someone is forcing a child to beg,child_labor
+A woman is facing domestic violence,domestic_violence
+My husband is abusing me,domestic_violence
+Someone in my family is abusing me,domestic_violence
+I am facing dowry harassment,dowry_harassment
+Someone is demanding dowry from my family,dowry_harassment
+Someone is discriminating against me because of my caste,discrimination
+I faced discrimination because of my religion,discrimination
+Someone is discriminating against me because of my gender,discrimination
+I need information about my fundamental rights,constitutional_rights
+What are my rights under the Indian Constitution?,constitutional_rights
+A government department is not responding to my complaint,government_misuse
+I want to file an RTI application,rti
+The government is not giving me information under RTI,rti
+Someone is spreading fake news about me,defamation
+Someone is spreading false rumors about me,defamation
+My child is missing,kidnapping
+My kid is missing,kidnapping
+My son is missing,kidnapping
+My daughter is missing,kidnapping
+My child has been missing since morning,kidnapping
+I cannot find my child,kidnapping
+Someone took my child,kidnapping
+My child was abducted,kidnapping
+I saw a child working in a factory,child_labor
+A child is working in a tea stall,child_labor
+A child is working in a restaurant,child_labor
+Children are working in a shop,child_labor
+A child is being made to work instead of attending school,child_labor
+People are smoking in public transport,public_smoking
+Someone is smoking in a bus,public_smoking
+Someone is smoking in a train,public_smoking
+Someone is smoking in a public place,public_smoking
+Police is accepting a bribe,government_misuse
+A police officer asked me for money,government_misuse
+A government employee is accepting a bribe,government_misuse
+A politician is misusing power,government_misuse
+A public servant is misusing government property,government_misuse
+A government office is not responding to my complaint,government_misuse
+There is corruption in a government office,government_misuse
+Someone is spreading garbage in my area,public_nuisance
+There is garbage and bad smell in my street,public_nuisance
+Stray dogs are creating problems in my area,public_nuisance
+Water is leaking in my area,public_nuisance
+Street lights are not working,public_nuisance
+Roads are damaged in my area,public_nuisance
+There is no water supply in my area,public_nuisance
+There is no electricity in my area,public_nuisance
+Someone is playing loud music at night,public_nuisance
+People are drinking and creating nuisance in public,public_nuisance
+Someone is harassing women in public,harassment
+Someone is eve-teasing me,harassment
+Someone is stalking me,harassment
+Someone is sending me unwanted messages,harassment
+Someone is threatening me online,cybercrime
+Someone created a fake account using my photos,cybercrime
+Someone is spreading my private photos online,cybercrime
+My online account was hacked,cybercrime
+I lost money in an online scam,fraud
+Someone cheated me in a online transaction,fraud
+I received a fake lottery call,fraud
+A shop charged me more than the printed price,consumer_complaint
+A restaurant gave me bad food,consumer_complaint
+An online order was not delivered,consumer_complaint
+A company is not giving me a refund,consumer_complaint
+My landlord is increasing rent suddenly,tenant_dispute
+My landlord is not doing repairs,tenant_dispute
+My employer is not giving me leave,salary_dispute
+My employer is forcing me to work overtime,salary_dispute
+I am facing discrimination at work,workplace_harassment
+My school is charging extra fees,consumer_complaint
+A hospital is charging too much,consumer_complaint
+I need information about voting rights,constitutional_rights
+I need information about my fundamental rights,constitutional_rights
+I want to file an RTI application,rti
+Police is taking money from culprits,government_misuse
+Police is accepting money,government_misuse
+Police asked me for money,government_misuse
+Police is taking bribe,government_misuse
+A police officer is corrupt,government_misuse
+A politician is misusing power,government_misuse
+A government employee is taking money,government_misuse
+A public servant is accepting bribe,government_misuse

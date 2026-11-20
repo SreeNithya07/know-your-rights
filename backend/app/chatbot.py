@@ -28,12 +28,13 @@ LEGAL_KB = {
         "urgency": "medium"
     },
         "government_misuse": {
-        "reply": "If a government employee or public servant is misusing their power, keep evidence such as names, designation, office address, dates, receipts, messages, photos, and witness details. You may complain to the concerned department, senior officer, vigilance authority, or appropriate grievance portal. Do not pay a bribe; preserve any demand for money as evidence.",
+                "reply": "If a police officer, government employee, or public representative is taking money, accepting a bribe, or misusing their power, do not pay or confront them directly. Write down the officer or employee’s name, designation, badge or ID number, office, date, time, location, amount demanded, and any vehicle or receipt details. Preserve messages, call recordings, photos, videos, and witness information. You may file a public grievance through CPGRAMS or approach the concerned department, vigilance authority, or appropriate anti-corruption authority.",
         "links": [
             "https://pgportal.gov.in/",
-            "https://www.indiacode.nic.in/"
+            "https://indiacode.gov.in/"
         ],
         "urgency": "high"
+    
     },
     "kidnapping": {
         "reply": "If someone has been kidnapped, abducted, or is being held against their will, contact the police immediately. If there is immediate danger, call 112. Preserve the last known location, phone number, photo, clothing description, vehicle details, and any messages or calls. Do not try to confront the kidnapper yourself.",
@@ -184,14 +185,14 @@ KEYWORD_INTENTS = {
         "no electricity", "stray dogs", "drainage", "sewage",
         "pothole", "public toilet", "municipality"
     ],
-    "government_misuse": {
-        "reply": "If a government employee, police officer, or public representative is misusing power, demanding a bribe, or not performing their duty, keep evidence such as name, designation, office, date, time, receipts, messages, photos, and witness details. Do not pay a bribe. You may file a public grievance through CPGRAMS or approach the concerned department, vigilance authority, or appropriate anti-corruption authority.",
-        "links": [
-            "https://pgportal.gov.in/",
-            "https://www.indiacode.nic.in/"
-        ],
-        "urgency": "high"
-    },
+    "government_misuse": [
+        "government employee", "public servant", "misusing power",
+        "misuse of power", "bribe", "bribery", "corruption",
+        "police misuse", "officer misuse", "police taking money",
+        "taking money", "accepting money", "accepting bribe",
+        "asking for money", "demanding money", "culprits",
+        "politician misusing", "politician in power"
+    ],
     "kidnapping": [
         "kidnap", "kidnapped", "kidnapping", "abduct", "abducted",
         "missing", "missing person", "missing child", "missing kid",
@@ -213,7 +214,7 @@ KEYWORD_INTENTS = {
         "wife beating", "domestic abuse", "violence at home"
     ],
     "dowry_harassment": [
-        "dowry", "dowry harassment", "dowry demand"
+        "dowry", "dowry harassment", "dowry demand", "misbehave"
     ],
     "discrimination": [
         "discrimination", "caste discrimination", "religion discrimination",
