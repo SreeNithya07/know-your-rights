@@ -25,8 +25,7 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://know-your-rights-backend-0sg2.onrender.com", {
-        method: "POST",
+      const response = await fetch("https://know-your-rights-backend-0sg2.onrender.com/", {
         headers: {
           "Content-Type": "application/json"
         },
