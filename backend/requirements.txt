@@ -1,6 +1,9 @@
 fastapi
-uvicorn[standard]
-pydantic
-scikit-learn
+uvicorn
 joblib
+scikit-learn
+numpy
 pandas
+chromadb
+sentence-transformers
+pymupdf
