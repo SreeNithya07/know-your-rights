@@ -1,7 +1,5 @@
 
 from pathlib import Path
-import chromadb
-from sentence_transformers import SentenceTransformer
 
 ROOT = Path(__file__).resolve().parents[3]
 DATABASE = ROOT / "vector_database"
@@ -9,17 +7,47 @@ DATABASE = ROOT / "vector_database"
 MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 COLLECTION_NAME = "indian_laws"
 
-print("Loading legal search model...")
-model = SentenceTransformer(MODEL_NAME)
-
-client = chromadb.PersistentClient(path=str(DATABASE))
-
-collection = client.get_or_create_collection(
-    name=COLLECTION_NAME
-)
+# These remain unloaded when the backend starts.
+model = None
+collection = None
 
 
-# Expand broad questions into specific constitutional topics
+def initialize_rag():
+    global model, collection
+
+    if model is not None and collection is not None:
+        return True
+
+    try:
+        import chromadb
+        from sentence_transformers import SentenceTransformer
+
+        print("Loading legal search database...")
+
+        client = chromadb.PersistentClient(path=str(DATABASE))
+
+        collection = client.get_or_create_collection(
+            name=COLLECTION_NAME
+        )
+
+        if collection.count() == 0:
+            print("Legal database is empty.")
+            return False
+
+        print("Loading legal search model...")
+
+        model = SentenceTransformer(MODEL_NAME)
+
+        print("Legal search model loaded successfully.")
+        return True
+
+    except Exception as error:
+        print("RAG initialization failed:", error)
+        model = None
+        collection = None
+        return False
+
+
 def get_search_queries(question):
     text = question.lower()
 
@@ -49,56 +77,62 @@ def get_search_queries(question):
 
 def search_legal_documents(question, number_of_results=5):
 
-    if not question.strip():
+    if not question or not question.strip():
         return []
 
-    if collection.count() == 0:
+    if not initialize_rag():
         return []
 
-    queries = get_search_queries(question)
+    try:
+        if collection.count() == 0:
+            return []
 
-    found = {}
+        queries = get_search_queries(question)
 
-    # Search each query and combine unique results
-    for search_query in queries:
+        # Encode all queries together instead of separately.
+        embeddings = model.encode(queries)
 
-        query_embedding = model.encode(search_query).tolist()
+        found = {}
 
-        results = collection.query(
-            query_embeddings=[query_embedding],
-            n_results=min(4, collection.count()),
-            include=["documents", "metadatas", "distances"]
-        )
+        for search_query, query_embedding in zip(queries, embeddings):
 
-        for i, document in enumerate(results["documents"][0]):
-
-            metadata = results["metadatas"][0][i]
-            distance = results["distances"][0][i]
-
-            key = (
-                metadata["document"],
-                metadata["page"],
-                metadata["chunk"]
+            results = collection.query(
+                query_embeddings=[query_embedding.tolist()],
+                n_results=min(4, collection.count()),
+                include=["documents", "metadatas", "distances"]
             )
 
-            if key not in found or distance < found[key]["distance"]:
+            for i, document in enumerate(results["documents"][0]):
 
-                found[key] = {
-                    "text": document,
-                    "document": metadata["document"],
-                    "category": metadata["category"],
-                    "page": metadata["page"],
-                    "distance": distance
-                }
+                metadata = results["metadatas"][0][i]
+                distance = results["distances"][0][i]
 
-    # Lower distance means a closer semantic match
-    ranked_results = sorted(
-        found.values(),
-        key=lambda item: item["distance"]
-    )
+                key = (
+                    metadata["document"],
+                    metadata["page"],
+                    metadata["chunk"]
+                )
 
-    # Return the best unique passages
-    return ranked_results[:number_of_results]
+                if key not in found or distance < found[key]["distance"]:
+
+                    found[key] = {
+                        "text": document,
+                        "document": metadata["document"],
+                        "category": metadata["category"],
+                        "page": metadata["page"],
+                        "distance": distance
+                    }
+
+        ranked_results = sorted(
+            found.values(),
+            key=lambda item: item["distance"]
+        )
+
+        return ranked_results[:number_of_results]
+
+    except Exception as error:
+        print("Legal document search failed:", error)
+        return []
 
 
 if __name__ == "__main__":
