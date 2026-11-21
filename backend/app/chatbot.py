@@ -2,6 +2,29 @@ import joblib
 from pathlib import Path
 from pydantic import BaseModel
 from fastapi import APIRouter
+from app.rag.retriever import search_legal_documents
+
+
+# Load the trained legal provision ML model
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+LEGAL_MODEL_PATH = (
+    PROJECT_ROOT / "ml" / "artifacts" / "legal_provision_model.joblib"
+)
+
+try:
+    legal_bundle = joblib.load(LEGAL_MODEL_PATH)
+    legal_model = legal_bundle["model"]
+    legal_encoder = legal_bundle["encoder"]
+    LEGAL_THRESHOLD = legal_bundle["threshold"]
+
+    print("Legal provision ML model loaded successfully!")
+
+except Exception as error:
+    print("Legal ML model loading failed:", error)
+    legal_model = None
+    legal_encoder = None
+    LEGAL_THRESHOLD = 0.45
 
 MODEL_PATH = Path(__file__).parent / "incident_model.joblib"
 
@@ -11,7 +34,7 @@ except Exception:
     model = None
 
 LEGAL_KB = {
-        "public_smoking": {
+    "public_smoking": {
         "reply": "Smoking in public places and public transport may be restricted under applicable rules. Note the date, time, vehicle or location, and take a photo or video only if it is safe. You may report repeated violations to the transport authority, local civic body, or police. Avoid confrontation if the person becomes aggressive.",
         "links": [
             "https://www.india.gov.in/",
@@ -27,14 +50,13 @@ LEGAL_KB = {
         ],
         "urgency": "medium"
     },
-        "government_misuse": {
-                "reply": "If a police officer, government employee, or public representative is taking money, accepting a bribe, or misusing their power, do not pay or confront them directly. Write down the officer or employee’s name, designation, badge or ID number, office, date, time, location, amount demanded, and any vehicle or receipt details. Preserve messages, call recordings, photos, videos, and witness information. You may file a public grievance through CPGRAMS or approach the concerned department, vigilance authority, or appropriate anti-corruption authority.",
+    "government_misuse": {
+        "reply": "If a police officer, government employee, or public representative is taking money, accepting a bribe, or misusing their power, do not pay or confront them directly. Write down the officer or employee’s name, designation, badge or ID number, office, date, time, location, amount demanded, and any vehicle or receipt details. Preserve messages, call recordings, photos, videos, and witness information. You may file a public grievance through CPGRAMS or approach the concerned department, vigilance authority, or appropriate anti-corruption authority.",
         "links": [
             "https://pgportal.gov.in/",
             "https://indiacode.gov.in/"
         ],
         "urgency": "high"
-    
     },
     "kidnapping": {
         "reply": "If someone has been kidnapped, abducted, or is being held against their will, contact the police immediately. If there is immediate danger, call 112. Preserve the last known location, phone number, photo, clothing description, vehicle details, and any messages or calls. Do not try to confront the kidnapper yourself.",
@@ -173,8 +195,9 @@ LEGAL_KB = {
         "urgency": "low"
     }
 }
+
 KEYWORD_INTENTS = {
-        "public_smoking": [
+    "public_smoking": [
         "smoking in public", "smoking in bus", "smoking in train",
         "smoking in public transport", "smoking in public place",
         "someone smoking", "cigarette in public"
@@ -274,6 +297,34 @@ class ChatRequest(BaseModel):
     message: str
 
 
+def predict_legal_provisions(message):
+    if legal_model is None:
+        return []
+
+    try:
+        probabilities = legal_model.predict_proba([message])[0]
+
+        predictions = []
+
+        for index, probability in enumerate(probabilities):
+            if probability >= LEGAL_THRESHOLD:
+                predictions.append({
+                    "provision": str(legal_encoder.classes_[index]),
+                    "confidence": round(float(probability), 3)
+                })
+
+        predictions.sort(
+            key=lambda item: item["confidence"],
+            reverse=True
+        )
+
+        return predictions[:5]
+
+    except Exception as error:
+        print("Legal prediction error:", error)
+        return []
+
+
 chat_router = APIRouter()
 
 
@@ -281,27 +332,23 @@ chat_router = APIRouter()
 def chat(request: ChatRequest):
     text = request.message.lower().strip()
 
+    # 1. Emergency detection
     if any(word in text for word in EMERGENCY_WORDS):
         return {
             "intent": "emergency",
             "confidence": 1.0,
-            "reply": "If you are in immediate danger, call 112 in India now. Move to a safe place if possible and contact someone you trust. This app provides general legal awareness only and does not contact emergency services.",
-            "links": [
-                "https://nalsa.gov.in/"
-            ],
-            "urgency": "critical"
+            "reply": (
+                "If you are in immediate danger, call 112 in India now. "
+                "Move to a safe place if possible and contact someone "
+                "you trust. This app provides general legal awareness "
+                "only and does not contact emergency services."
+            ),
+            "links": ["https://nalsa.gov.in/"],
+            "urgency": "critical",
+            "sources": []
         }
 
-    if model is None:
-        return {
-            "intent": "unknown",
-            "confidence": 0.0,
-            "reply": "I can help with general legal-awareness questions. Please describe your issue in more detail.",
-            "links": [],
-            "urgency": "low"
-        }
-
-        text = request.message.lower()
+    # 2. Identify the user's issue using existing keywords
     intent = "general_legal_help"
 
     for possible_intent, words in KEYWORD_INTENTS.items():
@@ -311,12 +358,55 @@ def chat(request: ChatRequest):
 
     confidence = 1.0 if intent != "general_legal_help" else 0.0
 
-    info = LEGAL_KB.get(intent, LEGAL_KB["general_legal_help"])
+    # 3. Get the existing predefined legal response
+    info = LEGAL_KB.get(
+        intent,
+        LEGAL_KB["general_legal_help"]
+    )
 
+    reply = info["reply"]
+    links = list(info["links"])
+    sources = []
+
+    # 4. Retrieve relevant constitutional information using RAG
+    if intent == "constitutional_rights":
+        try:
+            results = search_legal_documents(
+                request.message,
+                number_of_results=3
+            )
+
+            if results:
+                reply += "\n\nRelevant information from the Constitution:\n"
+
+                for index, result in enumerate(results, start=1):
+                    reply += (
+                        f"\n{index}. {result['text'][:900]}\n"
+                    )
+
+                    sources.append({
+                        "document": result["document"],
+                        "page": result["page"],
+                        "category": result["category"]
+                    })
+
+                links.append(
+                    "https://www.legislative.gov.in/documents"
+                )
+
+        except Exception as error:
+            print("RAG retrieval error:", error)
+
+    # 5. Predict possible legal provisions using trained ML model
+    provisions = predict_legal_provisions(request.message)
+
+    # 6. Return the response to React frontend
     return {
         "intent": intent,
         "confidence": round(float(confidence), 3),
-        "reply": info["reply"],
-        "links": info["links"],
-        "urgency": info["urgency"]
+        "reply": reply,
+        "links": list(dict.fromkeys(links)),
+        "urgency": info["urgency"],
+        "sources": sources,
+        "provisions": provisions
     }

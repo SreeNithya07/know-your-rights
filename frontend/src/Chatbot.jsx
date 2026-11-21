@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 export default function Chatbot() {
@@ -7,6 +8,7 @@ export default function Chatbot() {
       text: "Namaste! 🇮🇳 I am your Know Your Rights assistant. Describe your issue, and I will help you understand possible legal-awareness options."
     }
   ]);
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -14,7 +16,7 @@ export default function Chatbot() {
     event.preventDefault();
 
     const userMessage = input.trim();
-    if (!userMessage) return;
+    if (!userMessage || loading) return;
 
     setMessages((old) => [
       ...old,
@@ -25,7 +27,7 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://know-your-rights-backend-0sg2.onrender.com/chat", {
+      const response = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -35,6 +37,10 @@ export default function Chatbot() {
         })
       });
 
+      if (!response.ok) {
+        throw new Error("Backend request failed");
+      }
+
       const data = await response.json();
 
       setMessages((old) => [
@@ -42,12 +48,15 @@ export default function Chatbot() {
         {
           role: "bot",
           text: data.reply,
-          links: data.links,
+          links: data.links || [],
           urgency: data.urgency,
-          intent: data.intent
+          intent: data.intent,
+          provisions: data.provisions || [],
+          sources: data.sources || []
         }
       ]);
-    } catch {
+
+    } catch (error) {
       setMessages((old) => [
         ...old,
         {
@@ -62,6 +71,7 @@ export default function Chatbot() {
 
   return (
     <div className="chat-page">
+
       <header className="chat-header">
         <div className="header-icon">🇮🇳</div>
 
@@ -72,18 +82,70 @@ export default function Chatbot() {
       </header>
 
       <div className="chat-box">
+
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`message-row ${message.role === "user" ? "user-row" : "bot-row"}`}
+            className={`message-row ${
+              message.role === "user" ? "user-row" : "bot-row"
+            }`}
           >
-            <div className={`message ${message.role === "user" ? "user-message" : "bot-message"}`}>
+            <div
+              className={`message ${
+                message.role === "user" ? "user-message" : "bot-message"
+              }`}
+            >
+
               <p>{message.text}</p>
 
-              {message.links && message.links.length > 0 && (
+              {/* ML PREDICTED LEGAL PROVISIONS */}
+              {message.provisions?.length > 0 && (
+                <div className="legal-provisions">
+                  <h3>⚖️ Possible Relevant Legal Provisions</h3>
+
+                  {message.provisions.map((item, i) => (
+                    <div className="provision-item" key={i}>
+                      <p>{item.provision}</p>
+
+                      <span>
+                        Model confidence: {(item.confidence * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  ))}
+
+                  <small>
+                    These are ML-generated suggestions, not confirmation
+                    that these laws apply to your situation.
+                  </small>
+                </div>
+              )}
+
+              {/* RETRIEVED LEGAL SOURCES */}
+              {message.sources?.length > 0 && (
+                <div className="legal-sources">
+                  <h3>📚 Retrieved Legal Sources</h3>
+
+                  {message.sources.map((source, i) => (
+                    <div key={i} className="source-item">
+                      <p>{source.document}</p>
+                      <span>
+                        Page: {source.page} | Category: {source.category}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* OFFICIAL LINKS */}
+              {message.links?.length > 0 && (
                 <div className="links">
                   {message.links.map((link) => (
-                    <a key={link} href={link} target="_blank" rel="noreferrer">
+                    <a
+                      key={link}
+                      href={link}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       Official resource ↗
                     </a>
                   ))}
@@ -95,11 +157,15 @@ export default function Chatbot() {
                   Immediate danger? Call 112 in India.
                 </div>
               )}
+
             </div>
           </div>
         ))}
 
-        {loading && <p className="typing">Legal assistant is thinking...</p>}
+        {loading && (
+          <p className="typing">Legal assistant is thinking...</p>
+        )}
+
       </div>
 
       <form className="chat-form" onSubmit={sendMessage}>
@@ -110,14 +176,20 @@ export default function Chatbot() {
           className="chat-input"
         />
 
-        <button type="submit" disabled={loading} className="send-button">
-          ⚖️
+        <button
+          type="submit"
+          disabled={loading}
+          className="send-button"
+        >
+          ➤
         </button>
       </form>
 
       <p className="disclaimer">
-        General legal awareness only. Not legal advice. For emergencies in India, call 112.
+        General legal awareness only. Not legal advice.
+        For emergencies in India, call 112.
       </p>
+
     </div>
   );
 }

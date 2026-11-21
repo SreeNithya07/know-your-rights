@@ -162,3 +162,43 @@ body {
   color: #777;
   margin-top: 12px;
 }
+
+
+.legal-provisions,
+.legal-sources {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(100, 120, 150, 0.08);
+}
+
+.legal-provisions h3,
+.legal-sources h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.provision-item,
+.source-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(120, 120, 120, 0.2);
+}
+
+.provision-item p,
+.source-item p {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.provision-item span,
+.source-item span {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.legal-provisions small {
+  display: block;
+  margin-top: 12px;
+  line-height: 1.5;
+  opacity: 0.8;
+}
