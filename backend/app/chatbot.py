@@ -186,6 +186,24 @@ LEGAL_KB = {
         ],
         "urgency": "high"
     },
+        "forced_religious_conversion": {
+        "reply": (
+            "Forcing someone to change their religion through threats, "
+            "coercion, or pressure may raise serious legal concerns. "
+            "Article 25 of the Constitution protects freedom of conscience "
+            "and the freedom to profess, practise and propagate religion, "
+            "subject to constitutional restrictions. Depending on the facts "
+            "and the state where this occurred, specific laws concerning "
+            "unlawful religious conversion may also apply. Preserve threatening "
+            "messages and other evidence if it is safe. You may approach the "
+            "police or seek free legal assistance through NALSA."
+        ),
+        "links": [
+            "https://nalsa.gov.in/",
+            "https://www.indiacode.nic.in/"
+        ],
+        "urgency": "high"
+    },
     "general_legal_help": {
         "reply": "I can help with general legal-awareness information. Please describe what happened, including dates, people involved, messages or documents, and the outcome you want.",
         "links": [
@@ -348,13 +366,75 @@ def chat(request: ChatRequest):
             "sources": []
         }
 
-    # 2. Identify the user's issue using existing keywords
+    # 2. Identify legal issues with priority-based detection
+
     intent = "general_legal_help"
 
-    for possible_intent, words in KEYWORD_INTENTS.items():
-        if any(word in text for word in words):
-            intent = possible_intent
-            break
+    # Forced religious conversion
+    conversion_words = [
+        "force me to convert",
+        "forcing me to convert",
+        "forced to convert",
+        "force to convert",
+        "convert my religion",
+        "change my religion",
+        "forced religious conversion",
+        "threatening me to convert",
+        "forcing conversion",
+        "religious conversion by force"
+    ]
+
+    # Child labour in hazardous places
+    child_labour_words = [
+        "child working in coal mine",
+        "child working in coal mines",
+        "children working in mines",
+        "child labour in mines",
+        "child labor in mines",
+        "child working in mine",
+        "kid working in coal mine",
+        "child working in factory",
+        "child working in hazardous",
+        "child labour",
+        "child labor",
+        "child exploitation",
+        "children working"
+    ]
+
+    # Domestic violence and spousal abuse
+    domestic_words = [
+        "husband harassing",
+        "husband is harassing",
+        "husband abusing",
+        "husband is abusing",
+        "husband beats",
+        "husband beating",
+        "husband threatens",
+        "husband threatening",
+        "wife being abused",
+        "wife being beaten",
+        "domestic violence",
+        "domestic abuse",
+        "family abuse",
+        "violence at home",
+        "in laws harassing",
+        "in-laws harassing"
+    ]
+
+    if any(word in text for word in conversion_words):
+        intent = "forced_religious_conversion"
+
+    elif any(word in text for word in child_labour_words):
+        intent = "child_labor"
+
+    elif any(word in text for word in domestic_words):
+        intent = "domestic_violence"
+
+    else:
+        for possible_intent, words in KEYWORD_INTENTS.items():
+            if any(word in text for word in words):
+                intent = possible_intent
+                break
 
     confidence = 1.0 if intent != "general_legal_help" else 0.0
 
