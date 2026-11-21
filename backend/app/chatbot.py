@@ -1,3 +1,4 @@
+import os
 import joblib
 from pathlib import Path
 from pydantic import BaseModel
@@ -449,7 +450,7 @@ def chat(request: ChatRequest):
     sources = []
 
     # 4. Retrieve relevant constitutional information using RAG
-    if intent == "constitutional_rights":
+    if intent == "constitutional_rights" and ENABLE_RAG:
         try:
             results = search_legal_documents(
                 request.message,
